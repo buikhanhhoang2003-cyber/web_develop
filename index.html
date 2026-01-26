@@ -1,951 +1,1235 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ánh Sáng Sứ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EQUITY EARTH - Nền Tảng Đầu Tư Nông Nghiệp Blockchain</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        :root {
+            --deep-space: #0A0E1A;
+            --dark-navy: #111827;
+            --dark-teal: #0F2027;
+            --forest-dark: #1A2F23;
+            --forest-medium: #2D4A3E;
+            --emerald: #10B981;
+            --emerald-light: #34D399;
+            --emerald-dark: #059669;
+            --cyan: #06B6D4;
+            --purple: #8B5CF6;
+            --violet: #A78BFA;
+            --mint: #A7F3D0;
+            --cream: #F0FDF4;
+        }
 
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--deep-space) 0%, var(--dark-teal) 50%, var(--forest-dark) 100%);
+            background-attachment: fixed;
+            color: var(--cream);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+        /* Animated grain overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            animation: grain 8s steps(10) infinite;
+        }
 
-<!-- Anime.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -10%); }
+            20% { transform: translate(-15%, 5%); }
+            30% { transform: translate(7%, -25%); }
+            40% { transform: translate(-5%, 25%); }
+            50% { transform: translate(-15%, 10%); }
+            60% { transform: translate(15%, 0%); }
+            70% { transform: translate(0%, 15%); }
+            80% { transform: translate(3%, 35%); }
+            90% { transform: translate(-10%, 10%); }
+        }
 
-<style>
-:root{
-  --bg:#1a1a1f;
-  --fg:#f5f5f7;
-  --sub:#d4cfc4;
-  --accent:#f5d9a6;
-  --line:rgba(255,255,255,.3);
-}
+        /* Animated gradient background blobs */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
 
-*{box-sizing:border-box}
+        .bg-blob-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--emerald), transparent);
+            top: -200px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
 
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--fg);
-  font-family:Inter,sans-serif;
-  overflow:hidden;
-  position:relative;
-}
+        .bg-blob-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--cyan), transparent);
+            bottom: -150px;
+            left: -150px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
 
-/* ===== LIGHTER CRAQUELURE BACKGROUND WITH GRADIENTS ===== */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:
-    /* Warm gradient overlays */
-    radial-gradient(circle at 15% 20%, rgba(245,217,166,0.08) 0%, transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(212,165,116,0.06) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(201,166,107,0.05) 0%, transparent 60%),
-    /* Base gradient - lighter */
-    linear-gradient(135deg, #1a1a1f, #242429, #1f1f24);
-  z-index:0;
-}
+        .bg-blob-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--purple), transparent);
+            top: 50%;
+            left: 50%;
+            animation: float 25s ease-in-out infinite;
+        }
 
-/* Gradient-based craquelure effect */
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:
-    /* Diagonal crack patterns using gradients */
-    linear-gradient(45deg, transparent 48%, rgba(245,217,166,0.12) 49%, rgba(245,217,166,0.12) 51%, transparent 52%),
-    linear-gradient(-45deg, transparent 48%, rgba(245,217,166,0.08) 49%, rgba(245,217,166,0.08) 51%, transparent 52%),
-    linear-gradient(30deg, transparent 49%, rgba(212,165,116,0.1) 50%, transparent 51%),
-    linear-gradient(-30deg, transparent 49%, rgba(201,166,107,0.09) 50%, transparent 51%),
-    /* Organic crack effect */
-    radial-gradient(ellipse at 20% 30%, transparent 30%, rgba(245,217,166,0.06) 31%, rgba(245,217,166,0.06) 32%, transparent 33%),
-    radial-gradient(ellipse at 70% 60%, transparent 40%, rgba(212,165,116,0.05) 41%, rgba(212,165,116,0.05) 42%, transparent 43%),
-    radial-gradient(ellipse at 40% 80%, transparent 35%, rgba(201,166,107,0.07) 36%, rgba(201,166,107,0.07) 37%, transparent 38%);
-  background-size: 
-    800px 800px,
-    600px 600px,
-    1000px 1000px,
-    900px 900px,
-    400px 400px,
-    500px 500px,
-    450px 450px;
-  background-position: 
-    0 0,
-    100px 50px,
-    200px 100px,
-    150px 200px,
-    50px 150px,
-    300px 250px,
-    250px 50px;
-  opacity:0.5;
-  mix-blend-mode:screen;
-  pointer-events:none;
-  z-index:1;
-  animation: craquelureShift 90s linear infinite;
-}
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(50px, -50px) rotate(120deg); }
+            66% { transform: translate(-50px, 50px) rotate(240deg); }
+        }
 
-@keyframes craquelureShift{
-  0%{
-    background-position: 
-      0 0,
-      100px 50px,
-      200px 100px,
-      150px 200px,
-      50px 150px,
-      300px 250px,
-      250px 50px;
-  }
-  100%{
-    background-position: 
-      800px 800px,
-      700px 650px,
-      1200px 1100px,
-      1050px 1100px,
-      450px 550px,
-      800px 750px,
-      700px 550px;
-  }
-}
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 14, 26, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+        }
 
-/* Subtle texture overlay */
-.ceramic-texture{
-  position:fixed;
-  inset:0;
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      rgba(255,255,255,0.015) 3px,
-      rgba(255,255,255,0.015) 6px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 3px,
-      rgba(255,255,255,0.015) 3px,
-      rgba(255,255,255,0.015) 6px
-    );
-  opacity:0.4;
-  pointer-events:none;
-  z-index:1;
-}
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.scroller{
-  display:flex;
-  width:500vw;
-  height:100vh;
-  transition:transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-  position:relative;
-  z-index:2;
-}
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--emerald-light), var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
 
-.panel{
-  width:100vw;
-  height:100vh;
-  padding:8vh 7vw;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:48px;
-  align-items:center;
-  position:relative;
-  transition: filter 0.6s ease, opacity 0.6s ease;
-}
+        nav {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
 
-.panel::after{
-  content:"";
-  position:absolute;
-  right:0;
-  top:12%;
-  width:1px;
-  height:76%;
-  background:linear-gradient(to bottom, transparent, var(--line), transparent);
-}
+        nav a {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            position: relative;
+        }
 
-/* Gallery Light */
-.panel-light{
-  position:absolute;
-  left:-40px;
-  top:0;
-  width:200px;
-  height:100%;
-  background:
-    radial-gradient(ellipse at left, 
-      rgba(245,217,166,0.35) 0%, 
-      rgba(245,217,166,0.18) 30%,
-      transparent 60%);
-  opacity:0;
-  pointer-events:none;
-  filter:blur(60px);
-  z-index:1;
-}
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--emerald), var(--cyan));
+            transition: width 0.3s ease;
+        }
 
-.panel.active .panel-light{
-  animation: lightEnter 1.2s ease-out forwards;
-}
+        nav a:hover {
+            color: var(--emerald-light);
+        }
 
-@keyframes lightEnter{
-  0%{opacity:0;transform:translateX(-50px)}
-  100%{opacity:1;transform:translateX(0)}
-}
+        nav a:hover::after {
+            width: 100%;
+        }
 
-/* Title Border with Tailwind classes */
-.text h1,
-.text h2{
-  font-family: 'Playfair Display', serif;
-  position:relative;
-  display:inline-block;
-}
+        .connect-wallet {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, var(--emerald), var(--cyan));
+            border: none;
+            color: var(--deep-space);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            border-radius: 4px;
+        }
 
-.title-border{
-  padding: 1rem 2rem;
-  background: rgba(245,217,166,0.08);
-  border: 2px solid rgba(245,217,166,0.35);
-  border-radius: 1.25rem;
-  box-shadow:
-    0 0 30px rgba(245,217,166,0.25),
-    inset 0 0 20px rgba(245,217,166,0.1);
-  backdrop-filter: blur(10px);
-}
+        .connect-wallet:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(16, 185, 129, 0.5);
+        }
 
-.text h1{font-size:64px;margin:0 0 32px}
-.text h2{font-size:42px;margin:0 0 28px}
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 100px;
+        }
 
-.text h1 .char,
-.text h2 .char{
-  display:inline-block;
-  opacity:0;
-  transform:translateY(-40px) rotateX(90deg);
-}
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+        }
 
-.text p{
-  max-width:520px;
-  color:var(--sub);
-  font-size:18px;
-  line-height:1.7;
-  position:relative;
-}
+        .hero-eyebrow {
+            color: var(--emerald-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
 
-/* Warmth glow */
-.text{
-  position:relative;
-  transition: filter 0.6s ease;
-  z-index:2;
-}
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--cream), var(--emerald-light), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-.text::before{
-  content:"";
-  position:absolute;
-  inset:-30px;
-  border-radius:40px;
-  background:radial-gradient(circle at center, var(--warmth-color, transparent) 0%, transparent 70%);
-  opacity:0;
-  pointer-events:none;
-  transition: opacity 1s ease;
-  z-index:-1;
-}
+        .hero-description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: rgba(240, 253, 244, 0.8);
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
 
-.panel.active .text::before{
-  opacity:0.3;
-}
+        .cta-group {
+            display: flex;
+            gap: 1.5rem;
+        }
 
-.media{
-  position:relative;
-  overflow:hidden;
-  border-radius:26px;
-}
+        .btn {
+            padding: 1.2rem 3rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 4px;
+        }
 
-.media img{
-  width:100%;
-  height:72vh;
-  object-fit:cover;
-  border-radius:26px;
-  border:1px solid rgba(255,255,255,.2);
-  box-shadow:0 20px 60px rgba(0,0,0,.4);
-  transition:transform 0.3s ease;
-}
+        .btn-primary {
+            background: linear-gradient(135deg, var(--emerald), var(--cyan));
+            color: var(--deep-space);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
 
-/* ===== LOGO SPLASH ===== */
-.logo-panel{
-  grid-template-columns:1fr;
-  place-items:center;
-}
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.5);
+        }
 
-.logo-stage{
-  position:relative;
-  width:360px;
-  height:360px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+        .btn-secondary {
+            background: transparent;
+            color: var(--emerald-light);
+            border: 2px solid var(--emerald);
+        }
 
-.logo-ring{
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  border:2px solid rgba(245,217,166,.5);
-  box-shadow:
-    0 0 25px rgba(245,217,166,.4),
-    0 0 60px rgba(245,217,166,.3),
-    inset 0 0 20px rgba(245,217,166,.25);
-}
+        .btn-secondary:hover {
+            background: var(--emerald);
+            color: var(--deep-space);
+            border-color: var(--emerald);
+        }
 
-.logo-core{
-  width:220px;
-  height:auto;
-  z-index:2;
-  filter:
-    drop-shadow(0 0 25px rgba(245,217,166,.5))
-    drop-shadow(0 0 80px rgba(245,217,166,.3));
-}
+        #farm-canvas {
+            width: 100%;
+            height: 500px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: linear-gradient(135deg, var(--forest-dark), var(--dark-teal));
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+        }
 
-.logo-particle{
-  position:absolute;
-  width:4px;
-  height:4px;
-  background:rgba(245,217,166,0.85);
-  border-radius:50%;
-  box-shadow:0 0 8px rgba(245,217,166,0.7);
-}
+        .section {
+            padding: 8rem 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
 
-/* Pills with Tailwind */
-.pill-grid{
-  display:flex;
-  gap:22px;
-  margin-top:28px;
-}
+        .section-header {
+            text-align: center;
+            margin-bottom: 6rem;
+        }
 
-.pill{
-  position:relative;
-  width:240px;
-  height:120px;
-  border-radius:22px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  background:rgba(255,255,255,.05);
-  color:var(--fg);
-  font-weight:500;
-  line-height:1.4;
-  opacity:0;
-  transform:translateY(40px);
-  border:1px solid rgba(245,217,166,.3);
-  box-shadow: inset 0 0 14px rgba(255,255,255,.1);
-  transition: all 0.4s ease;
-  overflow:hidden;
-}
+        .section-eyebrow {
+            color: var(--emerald-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
 
-.pill::before{
-  content:"";
-  position:absolute;
-  inset:-100%;
-  background:linear-gradient(45deg, 
-    transparent 30%, 
-    rgba(245,217,166,0.4) 50%, 
-    transparent 70%);
-  opacity:0;
-  transition:transform 0.6s ease, opacity 0.6s ease;
-}
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--cream), var(--emerald-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-.pill:hover::before{
-  opacity:1;
-  transform:translateX(100%);
-}
+        .section-description {
+            font-size: 1.15rem;
+            color: rgba(240, 253, 244, 0.7);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+            font-weight: 300;
+        }
 
-.reveal{
-  opacity:0;
-  transform:translateY(-20px);
-}
+        .layers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
 
-/* Particles */
-.particle-container{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  overflow:hidden;
-  z-index:10;
-}
+        .layer-card {
+            background: linear-gradient(135deg, rgba(26, 47, 35, 0.5), rgba(45, 74, 62, 0.5));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
 
-.particle{
-  position:absolute;
-  background:rgba(245,217,166,0.8);
-  border-radius:50%;
-  box-shadow:0 0 8px rgba(245,217,166,0.6);
-  pointer-events:none;
-}
+        .layer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--emerald), var(--cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
 
-.light-ray{
-  position:absolute;
-  width:2px;
-  height:100px;
-  background:linear-gradient(to bottom, 
-    rgba(245,217,166,0.7), 
-    transparent);
-  opacity:0;
-  pointer-events:none;
-  filter:blur(1px);
-}
+        .layer-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--emerald);
+            box-shadow: 0 20px 60px rgba(16, 185, 129, 0.3);
+        }
 
-footer{
-  position:fixed;
-  bottom:20px;
-  left:36px;
-  color:var(--sub);
-  z-index:100;
-  transition:color 0.6s;
-}
+        .layer-card:hover::before {
+            opacity: 1;
+        }
 
-.hint{
-  position:fixed;
-  bottom:20px;
-  right:36px;
-  color:var(--sub);
-  z-index:100;
-  transition:opacity 0.6s;
-}
-</style>
+        .layer-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            background: linear-gradient(135deg, var(--emerald), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.2;
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+            font-weight: 600;
+        }
+
+        .layer-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .layer-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: var(--emerald-light);
+            font-weight: 600;
+        }
+
+        .layer-text {
+            color: rgba(240, 253, 244, 0.8);
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(26, 47, 35, 0.5), rgba(15, 32, 39, 0.5));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: linear-gradient(180deg, var(--emerald), var(--cyan), var(--purple));
+            transition: height 0.4s ease;
+        }
+
+        .feature-card:hover::after {
+            height: 100%;
+        }
+
+        .feature-label {
+            color: var(--emerald-light);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--cream);
+            font-weight: 600;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            color: rgba(240, 253, 244, 0.8);
+            font-weight: 300;
+        }
+
+        .feature-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--emerald-light);
+            font-weight: 600;
+        }
+
+        .user-flow {
+            background: linear-gradient(135deg, rgba(45, 74, 62, 0.3), rgba(15, 32, 39, 0.3));
+            padding: 6rem 3rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(16, 185, 129, 0.3);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .flow-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            top: 30px;
+            right: -2rem;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--emerald), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.5;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--emerald), var(--cyan));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--deep-space);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .step-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--emerald-light);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .step-description {
+            font-size: 0.85rem;
+            color: rgba(240, 253, 244, 0.7);
+            font-weight: 300;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .team-member {
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+        }
+
+        .member-avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--emerald), var(--cyan), var(--purple));
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 3px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover .member-avatar {
+            box-shadow: 0 15px 50px rgba(16, 185, 129, 0.5);
+            border-color: var(--emerald);
+        }
+
+        .member-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--cream);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .member-role {
+            color: var(--emerald-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .member-bio {
+            color: rgba(240, 253, 244, 0.7);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .stats-section {
+            background: rgba(10, 14, 26, 0.5);
+            padding: 6rem 3rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            padding: 2rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            background: linear-gradient(135deg, rgba(26, 47, 35, 0.3), rgba(15, 32, 39, 0.3));
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item:hover {
+            border-color: var(--emerald);
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--emerald-light), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            color: rgba(240, 253, 244, 0.7);
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+
+        footer {
+            padding: 4rem 3rem;
+            text-align: center;
+            border-top: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--emerald-light), var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-text {
+            color: rgba(240, 253, 244, 0.5);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(240, 253, 244, 0.7);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--emerald-light);
+        }
+
+        .copyright {
+            color: rgba(240, 253, 244, 0.4);
+            font-size: 0.8rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 3rem;
+            }
+
+            .layers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-step::after {
+                display: none;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
 </head>
-
 <body>
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
 
-<!-- Ceramic texture overlay -->
-<div class="ceramic-texture"></div>
+    <header>
+        <div class="header-content">
+            <div class="logo">EQUITY EARTH</div>
+            <nav>
+                <a href="#platform">Nền Tảng</a>
+                <a href="#features">Tính Năng</a>
+                <a href="#team">Đội Ngũ</a>
+                <a href="#about">Về Chúng Tôi</a>
+            </nav>
+            <button class="connect-wallet">Kết Nối Ví</button>
+        </div>
+    </header>
 
-<div class="scroller" id="scroller">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-left">
+                <div class="hero-eyebrow">Đầu Tư Nông Nghiệp Blockchain</div>
+                <h1>Dân Chủ Hóa Quyền Sở Hữu Nông Trại</h1>
+                <p class="hero-description">
+                    Đầu tư vào tài sản nông nghiệp thực thông qua NFT. Giám sát nông trại theo thời gian thực, 
+                    tham gia quản trị, và nhận lợi nhuận minh bạch từ canh tác bền vững.
+                </p>
+                <div class="cta-group">
+                    <a href="#" class="btn btn-primary">Xem Dự Án</a>
+                    <a href="#" class="btn btn-secondary">Tìm Hiểu Thêm</a>
+                </div>
+            </div>
+            <div class="hero-right">
+                <canvas id="farm-canvas"></canvas>
+            </div>
+        </div>
+    </section>
 
-  <!-- LOGO SPLASH -->
-  <section class="panel logo-panel" data-panel="0">
-    <div class="panel-light"></div>
-    <div class="logo-stage" id="logoStage">
-      <div class="logo-ring"></div>
-      <img src="Logo_ASS.jpg" class="logo-core" alt="Ánh Sáng Sứ">
+    <section class="section" id="platform">
+        <div class="section-header">
+            <div class="section-eyebrow">Kiến Trúc Ba Tầng</div>
+            <h2 class="section-title">Nền Tảng EQUITY EARTH</h2>
+            <p class="section-description">
+                Nền tảng của chúng tôi tích hợp IoT, AI và Blockchain để tạo ra một hệ sinh thái 
+                đầu tư nông nghiệp minh bạch, hiệu quả và dân chủ.
+            </p>
+        </div>
+
+        <div class="layers-grid">
+            <div class="layer-card">
+                <div class="layer-number">01</div>
+                <div class="layer-icon">🛰️</div>
+                <h3 class="layer-title">Tầng Vật Lý</h3>
+                <p class="layer-text">
+                    Cảm biến IoT và công nghệ drone thu thập dữ liệu thời gian thực về độ ẩm đất, pH, 
+                    sức khỏe cây trồng và phát hiện sâu bệnh. Giám sát liên tục đảm bảo điều kiện canh tác tối ưu.
+                </p>
+            </div>
+
+            <div class="layer-card">
+                <div class="layer-number">02</div>
+                <div class="layer-icon">🤖</div>
+                <h3 class="layer-title">Tầng Trí Tuệ</h3>
+                <p class="layer-text">
+                    Thuật toán AI tiên tiến phân tích dữ liệu để đưa ra khuyến nghị hành động, 
+                    dự đoán năng suất, phát hiện bệnh sớm và tự động hóa quy trình canh tác để đạt hiệu quả tối đa.
+                </p>
+            </div>
+
+            <div class="layer-card">
+                <div class="layer-number">03</div>
+                <div class="layer-icon">⛓️</div>
+                <h3 class="layer-title">Tầng Blockchain</h3>
+                <p class="layer-text">
+                    Token hóa tài sản qua NFT đảm bảo quyền sở hữu minh bạch, hợp đồng thông minh tự động phân phối lợi nhuận, 
+                    và quản trị phi tập trung trao quyền cho nhà đầu tư đưa ra quyết định canh tác.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="features">
+        <div class="section-header">
+            <div class="section-eyebrow">Tính Năng Nền Tảng</div>
+            <h2 class="section-title">Hệ Sinh Thái Đầu Tư Hoàn Chỉnh</h2>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-label">Bảng Điều Khiển</div>
+                <h3 class="feature-title">Giao Diện Nhà Đầu Tư</h3>
+                <ul class="feature-list">
+                    <li>Tích hợp luồng camera và drone trực tiếp với bản đồ nhiệt</li>
+                    <li>Dashboard chỉ số thời gian thực (độ ẩm, pH đất, sức khỏe cây trồng)</li>
+                    <li>Hệ thống bỏ phiếu quản trị cho các quyết định canh tác</li>
+                    <li>Chọn loại phân bón dựa trên đề xuất AI</li>
+                    <li>Lựa chọn người mua và sản phẩm đầu ra từ danh sách được tuyển chọn</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-label">Blockchain</div>
+                <h3 class="feature-title">Quản Lý Tài Sản</h3>
+                <ul class="feature-list">
+                    <li>Thị trường NFT - mỗi token đại diện cho 1 hecta đất canh tác</li>
+                    <li>Hợp đồng thông minh minh bạch hiển thị cơ chế chia sẻ lợi nhuận</li>
+                    <li>Bảo hiểm on-chain và giảm thiểu rủi ro thông qua quỹ dự phòng</li>
+                    <li>Giao dịch thị trường thứ cấp để đảm bảo thanh khoản</li>
+                    <li>Phân phối cổ tức tự động bằng stablecoin hoặc token</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-label">AI Engine</div>
+                <h3 class="feature-title">Khuyến Nghị Thông Minh</h3>
+                <ul class="feature-list">
+                    <li>Phát hiện sâu bệnh tự động với đề xuất phương pháp xử lý</li>
+                    <li>Dự đoán năng suất và theo dõi hiệu suất so với chỉ tiêu</li>
+                    <li>Cơ hội mở rộng dựa trên chỉ số hiệu suất</li>
+                    <li>Phân tích thị trường để tối ưu thời điểm thu hoạch</li>
+                    <li>Thuật toán tối ưu hóa tài nguyên nước và phân bón</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-label">Truy Xuất Nguồn Gốc</div>
+                <h3 class="feature-title">Theo Dõi Chuỗi Cung Ứng</h3>
+                <ul class="feature-list">
+                    <li>Theo dõi sản phẩm từ đầu đến cuối từ nông trại đến người tiêu dùng</li>
+                    <li>Chứng nhận chất lượng và tài liệu tuân thủ</li>
+                    <li>Tính toán dấu chân carbon và chỉ số bền vững</li>
+                    <li>Báo cáo thu hoạch với bằng chứng hình ảnh</li>
+                    <li>Logistics phân phối và xác nhận giao hàng</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="user-flow">
+        <div class="section-header">
+            <div class="section-eyebrow">Hành Trình Người Dùng</div>
+            <h2 class="section-title">Từ Đầu Tư Đến Thu Hoạch</h2>
+        </div>
+
+        <div class="flow-steps">
+            <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-title">Kết Nối</div>
+                <div class="step-description">Liên kết ví (MetaMask/Phantom) để xác minh danh tính</div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-title">Chọn Lựa</div>
+                <div class="step-description">Xem các dự án có sẵn và bản đồ nông trại 3D</div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-title">Đầu Tư</div>
+                <div class="step-description">Mua NFT đại diện cho quyền sở hữu đất canh tác</div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-title">Quản Trị</div>
+                <div class="step-description">Bỏ phiếu về các quyết định canh tác hàng ngày</div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-title">Thu Nhập</div>
+                <div class="step-description">Theo dõi thu hoạch và nhận lợi nhuận vào ví</div>
+            </div>
+        </div>
     </div>
-  </section>
 
-  <!-- HERO -->
-  <section class="panel" data-panel="1" data-warmth="#f5d9a6">
-    <div class="panel-light"></div>
-    <div class="particle-container"></div>
-    <div class="text">
-      <h1 class="reveal title-border" data-text="Ánh Sáng Sứ">Ánh Sáng Sứ</h1>
-      <p class="reveal">Thắp sáng không gian – nơi ánh sáng đi qua ký ức.</p>
-    </div>
-    <div class="media reveal">
-      <img src="product-1.jpg" alt="Ánh Sáng Sứ">
-    </div>
-  </section>
+    <section class="section" id="team">
+        <div class="section-header">
+            <div class="section-eyebrow">Đội Ngũ Của Chúng Tôi</div>
+            <h2 class="section-title">Những Người Tiên Phong</h2>
+            <p class="section-description">
+                Đội ngũ chuyên gia đa lĩnh vực với kinh nghiệm sâu về blockchain, nông nghiệp, 
+                và công nghệ AI cam kết cách mạng hóa ngành nông nghiệp.
+            </p>
+        </div>
 
-  <!-- STORY -->
-  <section class="panel" data-panel="2" data-warmth="#d4a574">
-    <div class="panel-light"></div>
-    <div class="particle-container"></div>
-    <div class="text">
-      <h2 class="reveal title-border" data-text="Câu chuyện">Câu chuyện</h2>
-      <p class="reveal">
-        Ánh Sáng Sứ ra đời từ khát vọng nối dài bàn tay nghệ nhân  
-        bằng tư duy thiết kế và công nghệ.
-      </p>
-      <p class="reveal">
-        Mỗi chiếc đèn không chỉ chiếu sáng –  
-        mà giữ lại một khoảnh khắc đời sống.
-      </p>
-    </div>
-    <div class="media reveal">
-      <img src="product-2.jpg" alt="">
-    </div>
-  </section>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="member-avatar">👨‍💼</div>
+                <h3 class="member-name">XXX</h3>
+                <div class="member-role">CEO & Đồng Sáng Lập</div>
+                <p class="member-bio">15 năm kinh nghiệm trong nông nghiệp công nghệ cao và quản lý dự án quy mô lớn</p>
+            </div>
 
-  <!-- VALUES -->
-  <section class="panel" data-panel="3" data-warmth="#c9a66b">
-    <div class="panel-light"></div>
-    <div class="particle-container"></div>
-    <div class="text">
-      <h2 class="reveal title-border" data-text="Giá trị">Giá trị</h2>
-      <div class="pill-grid">
-        <div class="pill">Di sản<br>thủ công</div>
-        <div class="pill">Thiết kế<br>đương đại</div>
-        <div class="pill">Công nghệ<br>cá nhân hóa</div>
-      </div>
-    </div>
-    <div class="media reveal">
-      <img src="product-3.jpg" alt="">
-    </div>
-  </section>
+            <div class="team-member">
+                <div class="member-avatar">👩‍💻</div>
+                <h3 class="member-name">XXX</h3>
+                <div class="member-role">CTO & Blockchain Lead</div>
+                <p class="member-bio">Chuyên gia blockchain với 10 năm phát triển smart contracts và DeFi</p>
+            </div>
 
-  <!-- PRODUCT -->
-  <section class="panel" data-panel="4" data-warmth="#e6c896">
-    <div class="panel-light"></div>
-    <div class="particle-container"></div>
-    <div class="text">
-      <h2 class="reveal title-border" data-text="Sản phẩm">Sản phẩm</h2>
-      <p class="reveal">
-        Một vật thể tĩnh –  
-        nhưng ánh sáng bên trong luôn chuyển động.
-      </p>
-    </div>
-    <div class="media reveal">
-      <img src="product-4.jpg" alt="">
-    </div>
-  </section>
+            <div class="team-member">
+                <div class="member-avatar">👨‍🔬</div>
+                <h3 class="member-name">Hoàng Bùi Khánh</h3>
+                <div class="member-role">AI/ML Director</div>
+                <p class="member-bio">Tiến sĩ về Machine Learning, chuyên về computer vision và phân tích dữ liệu nông nghiệp</p>
+            </div>
 
-</div>
+            <div class="team-member">
+                <div class="member-avatar">👩‍🌾</div>
+                <h3 class="member-name">Nguyễn Huux Bình</h3>
+                <div class="member-role">Giám Đốc Nông Nghiệp</div>
+                <p class="member-bio">Kỹ sư nông nghiệp với 12 năm kinh nghiệm canh tác bền vững và IoT</p>
+            </div>
 
-<footer>Ánh Sáng Sứ © 2026</footer>
-<div class="hint">Cuộn chuột →</div>
+            <div class="team-member">
+                <div class="member-avatar">👨‍💼</div>
+                <h3 class="member-name">Lê Đình Kiệt</h3>
+                <div class="member-role">CFO</div>
+                <p class="member-bio">Chuyên gia tài chính với kinh nghiệm quản lý quỹ đầu tư và tokenomics</p>
+            </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            <div class="team-member">
+                <div class="member-avatar">👩‍🎨</div>
+                <h3 class="member-name">XXX</h3>
+                <div class="member-role">Head of Design</div>
+                <p class="member-bio">Chuyên gia UX/UI với đam mê tạo ra trải nghiệm người dùng xuất sắc</p>
+            </div>
 
-<script>
-const scroller = document.getElementById('scroller');
-const panels = document.querySelectorAll('.panel');
-const totalPanels = panels.length;
+            <div class="team-member">
+                <div class="member-avatar">👨‍🔧</div>
+                <h3 class="member-name">Bùi Khánh Hoàng</h3>
+                <div class="member-role">IoT & Hardware Lead</div>
+                <p class="member-bio">Kỹ sư điện tử chuyên về hệ thống cảm biến và thiết bị IoT cho nông nghiệp</p>
+            </div>
 
-let currentPanelIndex = 0;
-let isScrolling = false;
-let scrollVelocity = 0;
-let lastScrollTime = Date.now();
-let accumulatedDelta = 0;
+            <div class="team-member">
+                <div class="member-avatar">👩‍💼</div>
+                <h3 class="member-name">XXX</h3>
+                <div class="member-role">Community Manager</div>
+                <p class="member-bio">Chuyên gia xây dựng cộng đồng và phát triển quan hệ đối tác chiến lược</p>
+            </div>
+        </div>
+    </section>
 
-window.addEventListener('wheel', (e)=>{
-  e.preventDefault();
-  
-  if(isScrolling) return;
-  
-  accumulatedDelta += e.deltaY;
-  
-  if(Math.abs(accumulatedDelta) > 50){
-    const direction = accumulatedDelta > 0 ? 1 : -1;
-    const nextIndex = currentPanelIndex + direction;
-    
-    if(nextIndex >= 0 && nextIndex < totalPanels){
-      scrollToPanel(nextIndex);
-    }
-    
-    accumulatedDelta = 0;
-  }
-  
-  const now = Date.now();
-  const deltaTime = now - lastScrollTime;
-  scrollVelocity = Math.abs(e.deltaY) / Math.max(deltaTime, 1);
-  lastScrollTime = now;
-  
-  updatePillGlow();
-},{passive:false});
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">100ha</div>
+                <div class="stat-label">Tổng Diện Tích Nông Trại</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1,000+</div>
+                <div class="stat-label">Nhà Đầu Tư Tích Cực</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Giám Sát Thời Gian Thực</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">92%</div>
+                <div class="stat-label">Tham Gia Quản Trị</div>
+            </div>
+        </div>
+    </section>
 
-function scrollToPanel(index){
-  if(isScrolling || index === currentPanelIndex) return;
-  
-  isScrolling = true;
-  currentPanelIndex = index;
-  
-  const targetX = index * window.innerWidth;
-  
-  anime({
-    targets: scroller,
-    translateX: -targetX,
-    duration: 1200,
-    easing: 'cubicBezier(0.23, 1, 0.32, 1)',
-    complete: () => {
-      isScrolling = false;
-      updateActivePanels();
-      triggerReveal();
-      createLightRays();
-    }
-  });
-  
-  updateActivePanels();
-  triggerReveal();
-}
-
-function updateActivePanels(){
-  panels.forEach((panel, index) => {
-    const isActive = index === currentPanelIndex;
-    
-    if(isActive){
-      panel.classList.add('active');
-      
-      const warmth = panel.dataset.warmth;
-      if(warmth){
-        panel.querySelector('.text').style.setProperty('--warmth-color', warmth);
-      }
-      
-      const img = panel.querySelector('.media img');
-      if(img){
-        anime({
-          targets: img,
-          scale: [1.05, 1],
-          duration: 1200,
-          easing: 'easeOutCubic'
-        });
-      }
-    } else {
-      panel.classList.remove('active');
-    }
-    
-    if(Math.abs(index - currentPanelIndex) > 1){
-      panel.style.opacity = '0.4';
-      panel.style.filter = 'brightness(0.7)';
-    } else {
-      panel.style.opacity = '1';
-      panel.style.filter = 'brightness(1)';
-    }
-  });
-  
-  updateEndingEffect();
-}
-
-function wrapTextInSpans(element){
-  const text = element.dataset.text || element.textContent;
-  element.innerHTML = '';
-  
-  [...text].forEach((char, i) => {
-    const span = document.createElement('span');
-    span.className = 'char';
-    span.textContent = char === ' ' ? '\u00A0' : char;
-    span.style.transitionDelay = `${i * 0.05}s`;
-    element.appendChild(span);
-  });
-}
-
-function createPorcelainDust(element){
-  const container = element.closest('.panel').querySelector('.particle-container');
-  if(!container) return;
-  
-  const rect = element.getBoundingClientRect();
-  const panelRect = container.getBoundingClientRect();
-  const particleCount = 25;
-  
-  for(let i = 0; i < particleCount; i++){
-    const particle = document.createElement('div');
-    particle.className = 'particle';
-    
-    const size = 2 + Math.random() * 4;
-    particle.style.width = size + 'px';
-    particle.style.height = size + 'px';
-    
-    const startX = (rect.left - panelRect.left) + Math.random() * rect.width;
-    const startY = (rect.top - panelRect.top) - 60;
-    
-    particle.style.left = startX + 'px';
-    particle.style.top = startY + 'px';
-    
-    container.appendChild(particle);
-    
-    anime({
-      targets: particle,
-      translateY: [0, 120 + Math.random() * 100],
-      translateX: [-30 + Math.random() * 60, -50 + Math.random() * 100],
-      opacity: [0.9, 0],
-      scale: [1.2, 0.2],
-      rotate: Math.random() * 360,
-      duration: 2000 + Math.random() * 1000,
-      easing: 'easeOutCubic',
-      delay: i * 40,
-      complete: () => particle.remove()
-    });
-  }
-}
-
-function createLightRays(){
-  const panel = panels[currentPanelIndex];
-  const container = panel.querySelector('.particle-container');
-  if(!container) return;
-  
-  const rayCount = 8;
-  
-  for(let i = 0; i < rayCount; i++){
-    const ray = document.createElement('div');
-    ray.className = 'light-ray';
-    
-    const startX = Math.random() * window.innerWidth;
-    const startY = -100;
-    
-    ray.style.left = startX + 'px';
-    ray.style.top = startY + 'px';
-    ray.style.height = (100 + Math.random() * 150) + 'px';
-    
-    container.appendChild(ray);
-    
-    anime({
-      targets: ray,
-      translateY: [0, window.innerHeight],
-      opacity: [0, 0.7, 0],
-      duration: 2500 + Math.random() * 1000,
-      delay: i * 150,
-      easing: 'easeInOutSine',
-      complete: () => ray.remove()
-    });
-  }
-}
-
-function triggerReveal(){
-  const panel = panels[currentPanelIndex];
-  
-  panel.querySelectorAll('.reveal').forEach((el, index)=>{
-    if(!el.classList.contains('shown')){
-      el.classList.add('shown');
-      
-      if((el.tagName === 'H1' || el.tagName === 'H2') && !el.querySelector('.char')){
-        wrapTextInSpans(el);
-      }
-      
-      anime({
-        targets: el,
-        opacity:[0,1],
-        duration: 800,
-        easing:'easeOutQuad',
-        delay: index * 200
-      });
-      
-      if(el.tagName === 'H1' || el.tagName === 'H2'){
-        const chars = el.querySelectorAll('.char');
-        
-        anime({
-          targets: chars,
-          opacity: [0, 1],
-          translateY: [-40, 0],
-          rotateX: [90, 0],
-          duration: 800,
-          delay: anime.stagger(50, {start: 300}),
-          easing: 'easeOutExpo',
-          complete: () => {
-            anime({
-              targets: el,
-              borderColor: [
-                'rgba(245,217,166,0.35)',
-                'rgba(245,217,166,0.85)',
-                'rgba(245,217,166,0.35)'
-              ],
-              boxShadow: [
-                '0 0 30px rgba(245,217,166,0.25), inset 0 0 20px rgba(245,217,166,0.1)',
-                '0 0 50px rgba(245,217,166,0.65), inset 0 0 30px rgba(245,217,166,0.25)',
-                '0 0 30px rgba(245,217,166,0.25), inset 0 0 20px rgba(245,217,166,0.1)'
-              ],
-              duration: 2000,
-              easing: 'easeInOutSine'
-            });
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">EQUITY EARTH</div>
+            <p class="footer-text">Cách mạng hóa đầu tư nông nghiệp thông qua công nghệ blockchain</p>
             
-            createPorcelainDust(el);
-          }
-        });
-      }
-      
-      if(el.tagName === 'P'){
-        anime({
-          targets: el,
-          opacity: [0, 1],
-          translateY: [-20, 0],
-          duration: 1000,
-          delay: 400,
-          easing: 'easeOutCubic'
-        });
-      }
-    }
-  });
+            <div class="footer-links">
+                <a href="#">Whitepaper</a>
+                <a href="#">Tài Liệu</a>
+                <a href="#">Cộng Đồng</a>
+                <a href="#">Hỗ Trợ</a>
+            </div>
+            
+            <p class="copyright">&copy; 2026 EQUITY EARTH. Bản quyền được bảo hộ.</p>
+        </div>
+    </footer>
 
-  panel.querySelectorAll('.pill').forEach((p,i)=>{
-    if(!p.classList.contains('shown')){
-      p.classList.add('shown');
-      anime({
-        targets:p,
-        opacity:[0,1],
-        translateY:[60,0],
-        scale: [0.8, 1],
-        delay: 600 + i*150,
-        duration:1000,
-        easing:'easeOutElastic(1, .6)'
-      });
-    }
-  });
-}
-
-let pillGlowAnimations = [];
-function updatePillGlow(){
-  const pills = document.querySelectorAll('.pill.shown');
-  const isSlow = scrollVelocity < 1.5;
-  
-  pills.forEach((pill, index) => {
-    if(isSlow){
-      if(!pillGlowAnimations[index]){
-        pillGlowAnimations[index] = anime({
-          targets: pill,
-          boxShadow: [
-            '0 0 12px rgba(245,217,166,0.5), inset 0 0 14px rgba(255,255,255,.1)',
-            '0 0 35px rgba(245,217,166,0.95), inset 0 0 25px rgba(255,255,255,.25)'
-          ],
-          borderColor: [
-            'rgba(245,217,166,.3)',
-            'rgba(245,217,166,.85)'
-          ],
-          scale: [1, 1.02],
-          direction: 'alternate',
-          loop: true,
-          duration: 1800,
-          easing: 'easeInOutSine'
-        });
-      }
-    } else {
-      if(pillGlowAnimations[index]){
-        pillGlowAnimations[index].pause();
-        pillGlowAnimations[index] = null;
+    <script>
+        // Three.js 3D Farm Visualization
+        const canvas = document.getElementById('farm-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
         
-        anime({
-          targets: pill,
-          boxShadow: '0 0 0 rgba(245,217,166,0), inset 0 0 14px rgba(255,255,255,.1)',
-          borderColor: 'rgba(245,217,166,.3)',
-          scale: 1,
-          duration: 600,
-          easing: 'easeOutQuad'
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+        renderer.setClearColor(0x1A2F23, 1);
+
+        // Create farm plots with gradient colors
+        const plotGeometry = new THREE.BoxGeometry(1, 0.15, 1);
+        const plots = [];
+        const colors = [0x10B981, 0x34D399, 0x059669, 0x06B6D4, 0x8B5CF6];
+
+        for (let x = 0; x < 10; x++) {
+            for (let z = 0; z < 10; z++) {
+                const material = new THREE.MeshPhongMaterial({
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    shininess: 50,
+                    transparent: true,
+                    opacity: 0.85,
+                    emissive: colors[Math.floor(Math.random() * colors.length)],
+                    emissiveIntensity: 0.2
+                });
+                
+                const plot = new THREE.Mesh(plotGeometry, material);
+                plot.position.set(x * 1.2 - 5, Math.random() * 0.3, z * 1.2 - 5);
+                plots.push(plot);
+                scene.add(plot);
+            }
+        }
+
+        // Add lights with green/cyan tones
+        const ambientLight = new THREE.AmbientLight(0xF0FDF4, 0.4);
+        scene.add(ambientLight);
+
+        const pointLight1 = new THREE.PointLight(0x10B981, 1.2, 50);
+        pointLight1.position.set(10, 10, 10);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0x06B6D4, 0.8, 50);
+        pointLight2.position.set(-10, 8, -10);
+        scene.add(pointLight2);
+
+        const pointLight3 = new THREE.PointLight(0x8B5CF6, 0.5, 40);
+        pointLight3.position.set(0, 12, 0);
+        scene.add(pointLight3);
+
+        camera.position.set(10, 10, 10);
+        camera.lookAt(0, 0, 0);
+
+        // Animation
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.008;
+
+            // Smooth camera rotation
+            camera.position.x = Math.cos(time * 0.3) * 12;
+            camera.position.z = Math.sin(time * 0.3) * 12;
+            camera.position.y = 8 + Math.sin(time * 0.2) * 2;
+            camera.lookAt(0, 0, 0);
+
+            // Animate plots with wave effect
+            plots.forEach((plot, i) => {
+                const row = Math.floor(i / 10);
+                const col = i % 10;
+                plot.position.y = Math.sin(time + row * 0.3 + col * 0.3) * 0.3;
+                plot.rotation.y = time * 0.5 + i * 0.1;
+            });
+
+            // Animate lights
+            pointLight1.intensity = 1 + Math.sin(time * 2) * 0.3;
+            pointLight2.intensity = 0.8 + Math.cos(time * 1.5) * 0.2;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
         });
-      }
-    }
-  });
-}
 
-function updateEndingEffect(){
-  const progress = currentPanelIndex / (totalPanels - 1);
-  const endThreshold = 0.6;
-  
-  if(progress > endThreshold){
-    const dimAmount = (progress - endThreshold) / (1 - endThreshold);
-    
-    panels.forEach((panel, index) => {
-      if(index < currentPanelIndex){
-        panel.style.filter = `brightness(${1 - dimAmount * 0.4})`;
-      }
-    });
-    
-    document.body.style.background = `rgb(${26 - dimAmount * 8}, ${26 - dimAmount * 8}, ${31 - dimAmount * 10})`;
-    
-    const currentPanel = panels[currentPanelIndex];
-    if(currentPanel){
-      const title = currentPanel.querySelector('h1, h2');
-      if(title){
-        anime({
-          targets: title,
-          boxShadow: `0 0 ${50 + dimAmount * 30}px rgba(245,217,166,${0.45 + dimAmount * 0.4}), inset 0 0 ${25 + dimAmount * 15}px rgba(245,217,166,${0.15 + dimAmount * 0.2})`,
-          duration: 800,
-          easing: 'easeOutQuad'
+        // Anime.js animations on scroll
+        const animateOnScroll = () => {
+            anime({
+                targets: '.layer-card',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(200),
+                duration: 1000,
+                easing: 'easeOutExpo'
+            });
+
+            anime({
+                targets: '.feature-card',
+                scale: [0.9, 1],
+                opacity: [0, 1],
+                delay: anime.stagger(150),
+                duration: 800,
+                easing: 'easeOutQuad'
+            });
+
+            anime({
+                targets: '.team-member',
+                translateY: [60, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 1200,
+                easing: 'easeOutExpo'
+            });
+
+            anime({
+                targets: '.stat-item',
+                scale: [0.8, 1],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 800,
+                easing: 'easeOutBack'
+            });
+        };
+
+        // Trigger animations when sections come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateOnScroll();
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
         });
-      }
-    }
-    
-    document.querySelector('.hint').style.opacity = 1 - dimAmount;
-  } else {
-    document.body.style.background = 'var(--bg)';
-    document.querySelector('.hint').style.opacity = 1;
-  }
-}
 
-anime({
-  targets: '.logo-core',
-  rotate: 360,
-  duration: 24000,
-  easing: 'linear',
-  loop: true
-});
+        // Animate hero elements on load
+        anime({
+            targets: '.hero-left > *',
+            translateX: [-50, 0],
+            opacity: [0, 1],
+            delay: anime.stagger(200, {start: 300}),
+            duration: 1000,
+            easing: 'easeOutExpo'
+        });
 
-anime({
-  targets: '.logo-core',
-  scale: [0.92, 1.08],
-  direction: 'alternate',
-  duration: 3200,
-  easing: 'easeInOutSine',
-  loop: true
-});
+        anime({
+            targets: '#farm-canvas',
+            translateX: [50, 0],
+            opacity: [0, 1],
+            duration: 1200,
+            delay: 500,
+            easing: 'easeOutExpo'
+        });
 
-anime({
-  targets: '.logo-ring',
-  rotate: -360,
-  duration: 30000,
-  easing: 'linear',
-  loop: true
-});
+        // Connect Wallet Button
+        document.querySelector('.connect-wallet').addEventListener('click', () => {
+            anime({
+                targets: '.connect-wallet',
+                scale: [1, 0.95, 1.05, 1],
+                duration: 500,
+                easing: 'easeInOutQuad'
+            });
+            alert('Kết nối ví sẽ tích hợp với MetaMask/Phantom');
+        });
 
-function createLogoParticles(){
-  const stage = document.getElementById('logoStage');
-  const particleCount = 12;
-  
-  for(let i = 0; i < particleCount; i++){
-    const particle = document.createElement('div');
-    particle.className = 'logo-particle';
-    
-    const angle = (i / particleCount) * Math.PI * 2;
-    const radius = 140 + Math.random() * 40;
-    
-    particle.style.left = '50%';
-    particle.style.top = '50%';
-    
-    stage.appendChild(particle);
-    
-    anime({
-      targets: particle,
-      translateX: Math.cos(angle) * radius,
-      translateY: Math.sin(angle) * radius,
-      opacity: [0, 0.85, 0],
-      scale: [0, 1.5, 0],
-      duration: 3000 + Math.random() * 2000,
-      delay: i * 200,
-      loop: true,
-      easing: 'easeInOutSine'
-    });
-  }
-}
+        // Floating animation for gradient blobs
+        anime({
+            targets: '.bg-blob-1',
+            translateX: [0, 30, -30, 0],
+            translateY: [0, -40, 40, 0],
+            duration: 20000,
+            easing: 'easeInOutSine',
+            loop: true
+        });
 
-createLogoParticles();
+        anime({
+            targets: '.bg-blob-2',
+            translateX: [0, -40, 40, 0],
+            translateY: [0, 30, -30, 0],
+            duration: 15000,
+            easing: 'easeInOutSine',
+            loop: true
+        });
 
-function logoHeartbeat(){
-  anime({
-    targets: '.logo-core',
-    filter: [
-      'drop-shadow(0 0 25px rgba(245,217,166,.5)) drop-shadow(0 0 80px rgba(245,217,166,.3))',
-      'drop-shadow(0 0 50px rgba(245,217,166,1)) drop-shadow(0 0 140px rgba(245,217,166,.7))',
-      'drop-shadow(0 0 25px rgba(245,217,166,.5)) drop-shadow(0 0 80px rgba(245,217,166,.3))'
-    ],
-    scale: [1, 1.1, 1],
-    duration: 900,
-    easing: 'easeInOutQuad'
-  });
-  
-  anime({
-    targets: '.logo-ring',
-    boxShadow: [
-      '0 0 25px rgba(245,217,166,.4), 0 0 60px rgba(245,217,166,.3), inset 0 0 20px rgba(245,217,166,.25)',
-      '0 0 50px rgba(245,217,166,.9), 0 0 120px rgba(245,217,166,.6), inset 0 0 40px rgba(245,217,166,.55)',
-      '0 0 25px rgba(245,217,166,.4), 0 0 60px rgba(245,217,166,.3), inset 0 0 20px rgba(245,217,166,.25)'
-    ],
-    duration: 900,
-    easing: 'easeInOutQuad'
-  });
-}
-
-setInterval(() => {
-  logoHeartbeat();
-}, 8000 + Math.random() * 2000);
-
-setTimeout(logoHeartbeat, 3000);
-
-updateActivePanels();
-triggerReveal();
-
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'ArrowRight' && currentPanelIndex < totalPanels - 1){
-    scrollToPanel(currentPanelIndex + 1);
-  } else if(e.key === 'ArrowLeft' && currentPanelIndex > 0){
-    scrollToPanel(currentPanelIndex - 1);
-  }
-});
-</script>
-
+        anime({
+            targets: '.bg-blob-3',
+            scale: [1, 1.1, 0.9, 1],
+            duration: 25000,
+            easing: 'easeInOutSine',
+            loop: true
+        });
+    </script>
 </body>
-
 </html>
